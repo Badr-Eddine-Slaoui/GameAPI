@@ -1,7 +1,10 @@
 import express from "express";
 import fs from "fs";
+import cors from "cors";
 
 const app = express();
+
+app.use(cors());
 
 const games = JSON.parse(fs.readFileSync("./games.json", "utf-8"));
 

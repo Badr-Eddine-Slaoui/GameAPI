@@ -1,7 +1,6 @@
 import express from "express";
 import fs from "fs";
 import cors from "cors";
-import { log } from "console";
 
 const app = express();
 
@@ -97,6 +96,14 @@ app.get("/api/games/:id", (req, res) => {
   } else {
     res.status(404).json({ error: "Game not found" });
   }
+});
+
+app.get("/api/platforms", (_, res) => {
+  res.status(200).json({
+    platforms: [
+      ...new Set(games.flatMap((g) => g.platforms.map((p) => p.platform.name))),
+    ].sort(),
+  });
 });
 
 const PORT = 3000;

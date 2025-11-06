@@ -8,5 +8,15 @@
 <body>
     
 </body>
-<script src="./api/games/script.js"></script>
+<!-- <script src="./api/games/script.js"></script> -->
+ <script>
+    async function fetchData () {
+      fetch("https://game-api-five.vercel.app/api/games")
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data);
+        });
+    }
+    fetchData();
+ </script>
 </html>

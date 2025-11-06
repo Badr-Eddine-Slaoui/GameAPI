@@ -1,6 +1,6 @@
 self.addEventListener("fetch", (event) => {
   const url = new URL(event.request.url);
-  if (url.pathname === "/api/games") {
+  if (url.pathname === "/GameAPI/api/games") {
     event.respondWith(handleGamesRequest(url));
   }
 });

@@ -1,6 +1,7 @@
 import express from "express";
 import fs from "fs";
 import cors from "cors";
+import { log } from "console";
 
 const app = express();
 
@@ -77,7 +78,7 @@ app.get("/api/games", (req, res) => {
         })()
       : null;
 
-  res.json({
+  res.status(200).json({
     page: pageNum,
     limit: limitNum,
     total,
@@ -90,8 +91,12 @@ app.get("/api/games", (req, res) => {
 
 app.get("/api/games/:id", (req, res) => {
   const { id } = req.params;
-  const game = games.find((g) => g.id === id);
-  res.json(game);
+  const game = games.find((g) => g.id === +id);
+  if (game) {
+    res.status(200).json(game);
+  } else {
+    res.status(404).json({ error: "Game not found" });
+  }
 });
 
 const PORT = 3000;

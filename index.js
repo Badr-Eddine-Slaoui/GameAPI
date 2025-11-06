@@ -106,5 +106,13 @@ app.get("/api/platforms", (_, res) => {
   });
 });
 
+app.get("/api/genres", (_, res) => {
+  res.status(200).json({
+    genres: [
+      ...new Set(games.flatMap((g) => g.genres.map((r) => r.name))),
+    ].sort(),
+  });
+});
+
 const PORT = 3000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

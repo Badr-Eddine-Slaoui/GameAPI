@@ -1,0 +1,89 @@
+import express from "express";
+import fs from "fs";
+
+const app = express();
+
+const games = JSON.parse(fs.readFileSync("./games.json", "utf-8"));
+
+app.get("/api/games", (req, res) => {
+  const {
+    genre,
+    platform,
+    tag,
+    store,
+    rating,
+    search,
+    page = "1",
+    limit = "20",
+  } = req.query;
+
+  const pageNum = parseInt(page);
+  const limitNum = parseInt(limit);
+  const start = (pageNum - 1) * limitNum;
+  const end = start + limitNum;
+
+  let filtered = games;
+
+  if (genre)
+    filtered = filtered.filter((g) =>
+      g.genres.map((g) => g.slug).includes(genre.toLowerCase())
+    );
+
+  if (platform)
+    filtered = filtered.filter((g) =>
+      g.platforms.map((p) => p.platform.slug).includes(platform.toLowerCase())
+    );
+
+  if (tag)
+    filtered = filtered.filter((g) =>
+      g.tags.map((t) => t.slug).includes(tag.toLowerCase())
+    );
+
+  if (store)
+    filtered = filtered.filter((g) =>
+      g.stores.map((s) => s.store.slug).includes(store.toLowerCase())
+    );
+
+  if (rating) filtered = filtered.filter((g) => g.rating >= parseFloat(rating));
+
+  if (search)
+    filtered = filtered.filter((g) =>
+      g.name.toLowerCase().includes(search.toLowerCase())
+    );
+
+  const paginated = filtered.slice(start, end);
+  const total = filtered.length;
+  const totalPages = Math.ceil(total / limitNum);
+
+  const baseUrl = `${req.protocol}://${req.get("host")}${req.path}`;
+  const params = new URLSearchParams(req.query);
+
+  const prevPage =
+    pageNum > 1
+      ? (() => {
+          params.set("page", pageNum - 1);
+          return `${baseUrl}?${params.toString()}`;
+        })()
+      : null;
+
+  const nextPage =
+    pageNum < totalPages
+      ? (() => {
+          params.set("page", pageNum + 1);
+          return `${baseUrl}?${params.toString()}`;
+        })()
+      : null;
+
+  res.json({
+    page: pageNum,
+    limit: limitNum,
+    total,
+    totalPages,
+    previous: prevPage,
+    next: nextPage,
+    results: paginated,
+  });
+});
+
+const PORT = 3000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

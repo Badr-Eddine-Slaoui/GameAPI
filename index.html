@@ -10,7 +10,7 @@
 </body>
 <script>
     function fetchData() {
-        fetch("http://16.16.171.104:3000/api/games?page=2&limit=30&paltform=pc")
+        fetch("https://debuggers-games-api.duckdns.org/api/games")
             .then((response) => response.json())
             .then((data) => console.log(data))
             .catch((error) => console.error(error));

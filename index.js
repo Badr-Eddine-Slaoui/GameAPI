@@ -101,7 +101,9 @@ app.get("/api/games/:id", (req, res) => {
 app.get("/api/platforms", (_, res) => {
   res.status(200).json({
     platforms: [
-      ...new Set(games.flatMap((g) => g.platforms.map((p) => {slug: p.platform.slug, name: p.platform.name}))),
+      ...new Set(games.flatMap((g) => g.platforms.map((p) => {
+        return { slug: p.platform.slug, name: p.platform.name };
+      }))),
     ].sort(),
   });
 });

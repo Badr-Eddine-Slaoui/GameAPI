@@ -115,10 +115,15 @@ app.get("/api/platforms", (_, res) => {
 });
 
 app.get("/api/genres", (_, res) => {
+  const uniqueGenres = [
+    ...new Map(
+      games.flatMap((g) =>
+        g.genres.map((g) => [g.slug, { slug: g.slug, name: g.name }])
+      )
+    ).values(),
+  ];
   res.status(200).json({
-    genres: [
-      ...new Set(games.flatMap((g) => g.genres.map((r) => r.name))),
-    ].sort(),
+    genres: uniqueGenres.sort((a, b) => a.name.localeCompare(b.name)),
   });
 });
 

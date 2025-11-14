@@ -99,12 +99,18 @@ app.get("/api/games/:id", (req, res) => {
 });
 
 app.get("/api/platforms", (_, res) => {
+  const uniquePlatforms = [
+    ...new Map(
+      games.flatMap((g) =>
+        g.platforms.map((p) => [
+          p.platform.slug,
+          { slug: p.platform.slug, name: p.platform.name },
+        ])
+      )
+    ).values(),
+  ];
   res.status(200).json({
-    platforms: [
-      ...new Set(games.flatMap((g) => g.platforms.map((p) => {
-        return { slug: p.platform.slug, name: p.platform.name };
-      }))),
-    ].sort(),
+    platforms: uniquePlatforms.sort((a, b) => a.name.localeCompare(b.name)),
   });
 });
 
